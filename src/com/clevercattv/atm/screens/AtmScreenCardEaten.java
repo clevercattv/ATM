@@ -1,18 +1,18 @@
 package com.clevercattv.atm.screens;
 
+import com.clevercattv.atm.atms.Atm;
 import com.clevercattv.atm.consoles.AtmConsole;
 
-public class AtmScreenCardEaten implements AtmScreen {
+public class AtmScreenCardEaten extends AtmScreenImpl {
 
-    private final AtmConsole console;
-
-    public AtmScreenCardEaten(AtmConsole console) {
-        this.console = console;
+    public AtmScreenCardEaten(AtmConsole console, Atm atm) {
+        super(console, atm);
     }
 
     @Override
     public Screen init() {
-        console.println("Cart slot full. Master called!");
+        console.println("No attempts left. Card was swallowed. Good luck.");
+        atm.eatCard();
         return Screen.CARD_WAIT;
     }
 

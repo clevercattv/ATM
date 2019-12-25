@@ -2,6 +2,7 @@ package com.clevercattv.atm.atms;
 
 import com.clevercattv.atm.cards.AtmCard;
 import com.clevercattv.atm.consoles.AtmConsole;
+import com.clevercattv.atm.models.enums.Bill;
 import com.clevercattv.atm.screens.AtmScreen;
 import com.clevercattv.atm.screens.Screen;
 
@@ -13,6 +14,8 @@ public interface Atm {
     void init();
 
     void update();
+
+    void eatCard();
 
     boolean isActive() ;
 
@@ -33,5 +36,7 @@ public interface Atm {
     List<AtmCard> getEatenCards();
 
     void setEatenCards(List<AtmCard> eatenCards);
+
+    Map<Bill, Integer> getBills();
 
 }

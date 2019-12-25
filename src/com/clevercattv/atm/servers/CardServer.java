@@ -17,6 +17,8 @@ public class CardServer {
         CARDS.add(new AtmCardImpl(1,1234, CardType.CREDIT,new BigDecimal(100),""));
     }
 
+    private CardServer(){}
+
     public static Optional<AtmCard> getCard(int cardNumber) {
         return CARDS.stream().filter(e -> e.matchingCardNumber(cardNumber)).findFirst();
     }

@@ -25,4 +25,5 @@ public class OperationResponse {
     public void setAdditionInformation(String additionInformation) {
         this.additionInformation = additionInformation;
     }
+
 }

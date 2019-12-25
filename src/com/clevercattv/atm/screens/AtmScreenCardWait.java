@@ -8,9 +8,9 @@ import com.clevercattv.atm.servers.CardServer;
 
 import static com.clevercattv.atm.atms.AtmImpl.COUNT_ATTEMPTS;
 
-public class AtmScreenCardWaitScreen extends AtmScreenImpl {
+public class AtmScreenCardWait extends AtmScreenImpl {
 
-    public AtmScreenCardWaitScreen(AtmConsole console, Atm atm) {
+    public AtmScreenCardWait(AtmConsole console, Atm atm) {
         super(console, atm);
     }
 

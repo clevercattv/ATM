@@ -2,18 +2,24 @@ package com.clevercattv.atm.atms;
 
 import com.clevercattv.atm.cards.AtmCard;
 import com.clevercattv.atm.consoles.AtmConsole;
+import com.clevercattv.atm.models.enums.Bill;
 import com.clevercattv.atm.screens.*;
 import com.clevercattv.atm.servers.CardServer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public class AtmImpl implements Atm {
 
     public static final int COUNT_ATTEMPTS = 3;
     public static final int EATEN_CARD_SLOT_SIZE = 100;
     public static final int MONEY_SLOT_SIZE = 200;
+    public static final int OPERATION_MAX_WITHDRAW = 1000;
 
     private final Map<Screen, AtmScreen> screens = new EnumMap<>(Screen.class);
+    private final Map<Bill, Integer> bills = new EnumMap<>(Bill.class);
 
     private AtmScreen currentScreen;
     private AtmCard currentCard;
@@ -36,9 +42,8 @@ public class AtmImpl implements Atm {
     public void update() {
         try {
             while (active) {
-                currentScreen = screens.get(currentScreen.init());
+                setCurrentScreen(screens.get(currentScreen.init()));
             }
-            screens.get(Screen.CARD_WAIT).init();
         } catch (Exception e) {
             console.println(e.getMessage());
             update();
@@ -47,7 +52,9 @@ public class AtmImpl implements Atm {
 
     private void initScreens() {
         screens.clear();
-        screens.put(Screen.CARD_WAIT, new AtmScreenCardWaitScreen(console, this));
+        screens.put(Screen.WITHDRAW_OPERATION, new AtmScreenWithdraw(console, this));
+        screens.put(Screen.EAT_CARD, new AtmScreenCardEaten(console, this));
+        screens.put(Screen.CARD_WAIT, new AtmScreenCardWait(console, this));
         screens.put(Screen.CARD_SLOT_FULL, new AtmScreenCardSlotFull(console, this));
         screens.put(Screen.MAIN_OPERATIONS, new AtmScreenMainOperations(console, this));
     }
@@ -103,6 +110,10 @@ public class AtmImpl implements Atm {
 
     public void setEatenCards(List<AtmCard> eatenCards) {
         this.eatenCards = eatenCards;
+    }
+
+    public Map<Bill, Integer> getBills() {
+        return bills;
     }
 
 }
