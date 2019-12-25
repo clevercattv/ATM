@@ -1,7 +1,5 @@
 package com.clevercattv.atm.consoles;
 
-import com.clevercattv.atm.screens.AtmScreen;
-
 import java.util.Scanner;
 
 public class AtmConsoleImpl implements AtmConsole {

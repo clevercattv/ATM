@@ -1,5 +1,6 @@
 package com.clevercattv.atm.screens;
 
+import com.clevercattv.atm.atms.Atm;
 import com.clevercattv.atm.cards.AtmCard;
 import com.clevercattv.atm.consoles.AtmConsole;
 import com.clevercattv.atm.exceptions.NoSuchCardException;
@@ -7,12 +8,10 @@ import com.clevercattv.atm.servers.CardServer;
 
 import static com.clevercattv.atm.atms.AtmImpl.COUNT_ATTEMPTS;
 
-public class AtmScreenCardWaitScreen implements AtmScreen {
+public class AtmScreenCardWaitScreen extends AtmScreenImpl {
 
-    private final AtmConsole console;
-
-    public AtmScreenCardWaitScreen(AtmConsole console) {
-        this.console = console;
+    public AtmScreenCardWaitScreen(AtmConsole console, Atm atm) {
+        super(console, atm);
     }
 
     /**
@@ -26,9 +25,10 @@ public class AtmScreenCardWaitScreen implements AtmScreen {
         for (int i = 1; i <= COUNT_ATTEMPTS; i++) {
             int pinCode = console.readInt("Write card pin code : ");
             if (card.matchingPinCode(pinCode)) {
-                return Screen.CARD_WAIT;
+                atm.setCurrentCard(card);
+                return Screen.MAIN_OPERATIONS;
             } else {
-                console.println(String.format("Wrong pin. Attempts left : %d", i - COUNT_ATTEMPTS));
+                console.println(String.format("Wrong pin. Attempts left : %d", COUNT_ATTEMPTS - i));
             }
         }
         return Screen.EAT_CARD;
