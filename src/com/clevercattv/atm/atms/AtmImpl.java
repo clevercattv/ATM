@@ -2,6 +2,7 @@ package com.clevercattv.atm.atms;
 
 import com.clevercattv.atm.cards.AtmCard;
 import com.clevercattv.atm.consoles.AtmConsole;
+import com.clevercattv.atm.exceptions.WrongBillsMapException;
 import com.clevercattv.atm.models.enums.Bill;
 import com.clevercattv.atm.screens.*;
 import com.clevercattv.atm.servers.CardServer;
@@ -15,7 +16,6 @@ public class AtmImpl implements Atm {
 
     public static final int COUNT_ATTEMPTS = 3;
     public static final int EATEN_CARD_SLOT_SIZE = 100;
-    public static final int MONEY_SLOT_SIZE = 200;
     public static final int OPERATION_MAX_WITHDRAW = 1000;
 
     private final Map<Screen, AtmScreen> screens = new EnumMap<>(Screen.class);
@@ -63,6 +63,7 @@ public class AtmImpl implements Atm {
         currentScreen = screens.get(Screen.CARD_WAIT);
     }
 
+    @Override
     public void eatCard() {
         CardServer.removeCard(currentCard);
         eatenCards.add(currentCard);
@@ -70,6 +71,14 @@ public class AtmImpl implements Atm {
         if (eatenCards.size() == EATEN_CARD_SLOT_SIZE) {
             active = false;
         }
+    }
+
+    @Override
+    public void updateBills(Map<Bill, Integer> bills) {
+        if (bills.size() != Bill.values().length){
+            throw new WrongBillsMapException();
+        }
+        this.bills.putAll(bills);
     }
 
     public boolean isActive() {

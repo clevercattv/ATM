@@ -1,9 +1,12 @@
 package com.clevercattv.atm.operations;
 
+import com.clevercattv.atm.exceptions.DefaultRealisationException;
 import com.clevercattv.atm.models.OperationResponse;
+import com.clevercattv.atm.models.enums.Bill;
 import com.clevercattv.atm.screens.AtmScreen;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public interface AtmOperation {
 
@@ -13,6 +16,8 @@ public interface AtmOperation {
 //    Центр денежных переводов
 //    Мои настройки
 
-    OperationResponse operation(BigDecimal money);
+    default OperationResponse operation(Integer money, Map<Bill, Integer> bills){
+        throw new DefaultRealisationException();
+    }
 
 }

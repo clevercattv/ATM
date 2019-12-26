@@ -17,6 +17,8 @@ public interface Atm {
 
     void eatCard();
 
+    void updateBills(Map<Bill, Integer> bills);
+
     boolean isActive() ;
 
     void setActive(boolean active);

@@ -2,16 +2,27 @@ package com.clevercattv.atm.screens;
 
 import com.clevercattv.atm.atms.Atm;
 import com.clevercattv.atm.atms.AtmImpl;
+import com.clevercattv.atm.cards.AtmCard;
 import com.clevercattv.atm.consoles.AtmConsole;
+import com.clevercattv.atm.models.OperationResponse;
 import com.clevercattv.atm.models.enums.Bill;
+import com.clevercattv.atm.operations.AtmOperation;
+import com.clevercattv.atm.operations.AtmOperationWithdraw;
+import com.clevercattv.atm.servers.CardServer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.clevercattv.atm.util.WithdrawUtil.canWithdraw;
 
 public class AtmScreenWithdraw extends AtmScreenImpl {
 
     private static final int[] DEFAULT_WITHDRAW = new int[]{10, 20, 50, 100, 200, 500, 1000};
     private static List<Integer> operations = new ArrayList<>();
+    private static final AtmOperation operation = new AtmOperationWithdraw();
 
     public AtmScreenWithdraw(AtmConsole console, Atm atm) {
         super(console, atm);
@@ -22,6 +33,7 @@ public class AtmScreenWithdraw extends AtmScreenImpl {
         console.println("Withdraw operations");
         console.println("(Max withdraw : " + AtmImpl.OPERATION_MAX_WITHDRAW + ")");
         fillDefaultWithdrawOperations(
+                atm.getCurrentCard(),
                 atm.getBills().entrySet()
                         .stream()
                         .filter(e -> e.getValue() > 0)
@@ -30,9 +42,9 @@ public class AtmScreenWithdraw extends AtmScreenImpl {
         console.println("(8) - Back to main operations");
         console.println("(9) - End session");
         while (true) {
-            int operation = console.readInt();
-            if (operations.contains(operation) || operation > 6) {
-                switch (operation) {
+            int action = console.readInt();
+            if (operations.contains(action) || action > 6) {
+                switch (action) {
                     case 0:
                     case 1:
                     case 2:
@@ -40,11 +52,11 @@ public class AtmScreenWithdraw extends AtmScreenImpl {
                     case 4:
                     case 5:
                     case 6:
-                        withdraw(DEFAULT_WITHDRAW[operation], atm.getBills());
+                        withdraw(DEFAULT_WITHDRAW[action]);
                         return Screen.WITHDRAW_OPERATION;
                     case 7:
                         console.println("Enter required amount : ");
-                        withdraw(console.readInt(), atm.getBills());
+                        withdraw(console.readInt());
                         return Screen.WITHDRAW_OPERATION;
                     case 8:
                         return Screen.MAIN_OPERATIONS;
@@ -58,44 +70,22 @@ public class AtmScreenWithdraw extends AtmScreenImpl {
         }
     }
 
-    private void fillDefaultWithdrawOperations(Map<Bill, Integer> bills) {
+    @SuppressWarnings("unchecked")
+    private void withdraw(Integer money) {
+        OperationResponse<Map<Bill, Integer>> response = operation.operation(money, new EnumMap<>(atm.getBills()));
+        console.println(response.getAdditionInformation());
+        atm.updateBills(response.getItem());
+    }
+
+    private void fillDefaultWithdrawOperations(AtmCard card, Map<Bill, Integer> bills) {
         operations.clear();
+        double balance = card.getBalance() * CardServer.WITHDRAW_INTEREST;
         for (int i = 0; i < DEFAULT_WITHDRAW.length; i++) {
-            if (canWithdraw(DEFAULT_WITHDRAW[i], bills)) {
+            if (balance > DEFAULT_WITHDRAW[i] && canWithdraw(DEFAULT_WITHDRAW[i], bills)) {
                 operations.add(i);
                 console.println(String.format("(%d) - %d ", i, DEFAULT_WITHDRAW[i]));
             }
         }
-    }
-
-    private void withdraw(Integer fullCount, Map<Bill, Integer> bills) {
-        for (Map.Entry<Bill, Integer> bill : bills.entrySet()) {
-            int resultBillsCount = countResultBills(0, fullCount, bill.getKey());
-            if (bill.getValue() < resultBillsCount) {
-                resultBillsCount = bill.getValue();
-            }
-            fullCount -= bill.getKey().getMoney() * resultBillsCount;
-            bills.put(bill.getKey(), bill.getValue() - resultBillsCount);
-            if (fullCount == 0) return;
-        }
-        throw new RuntimeException("Need " + fullCount + " more..");
-    }
-
-    private boolean canWithdraw(Integer fullCount, Map<Bill, Integer> bills) {
-        for (Map.Entry<Bill, Integer> bill : bills.entrySet()) {
-            int resultBillsCount = countResultBills(0, fullCount, bill.getKey());
-            if (bill.getValue() < resultBillsCount) {
-                resultBillsCount = bill.getValue();
-            }
-            fullCount -= bill.getKey().getMoney() * resultBillsCount;
-            if (fullCount == 0) return true;
-        }
-        return false;
-    }
-
-    private Integer countResultBills(Integer count, Integer left, Bill bill) {
-        return left >= bill.getMoney() ?
-                countResultBills(++count, left - bill.getMoney(), bill) : count;
     }
 
 }
