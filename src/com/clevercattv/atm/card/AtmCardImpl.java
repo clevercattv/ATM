@@ -7,17 +7,19 @@ public class AtmCardImpl implements AtmCard {
     private final int cardNumber;
     private int pinCode;
     private CardType type;
-    private double balance;
+    private double balance; // in real balance need use BigDecimal
     private String fullName;
     private boolean admin;
+    private int depositBalance;
 
-    public AtmCardImpl(int cardNumber, int pinCode, CardType type, double balance, String fullName, boolean admin) {
+    public AtmCardImpl(int cardNumber, int pinCode, CardType type, double balance, String fullName, boolean admin, int depositBalance) {
         this.cardNumber = cardNumber;
         this.pinCode = pinCode;
         this.type = type;
         this.balance = balance;
         this.fullName = fullName;
         this.admin = admin;
+        this.depositBalance = depositBalance;
     }
 
     @Override
@@ -88,6 +90,14 @@ public class AtmCardImpl implements AtmCard {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public int getDepositBalance() {
+        return depositBalance;
+    }
+
+    public void setDepositBalance(int depositBalance) {
+        this.depositBalance = depositBalance;
     }
 
     @Override

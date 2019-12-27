@@ -22,7 +22,8 @@ public class AtmScreenMainOperations extends AtmScreenImpl {
     public Screen init() {
         console.printScreenName("Main operations");
         console.print("(0) - Withdraw     ");
-        console.println("(1) - Check balance");
+        console.println("(1) - Deposit");
+        console.println("(2) - Check balance");
         boolean isAdmin = atm.getCurrentCard().isAdmin();
         if (isAdmin) {
             printAdminOperations();
@@ -30,7 +31,7 @@ public class AtmScreenMainOperations extends AtmScreenImpl {
         console.println(END_SESSION);
         while (true) {
             int operation = console.readInt(CHOOSE_OPERATION);
-            if (operation > 1 && operation < 7 && !isAdmin) {
+            if (operation > 2 && operation < 7 && !isAdmin) {
                 console.println(BAD_OPERATION);
                 continue;
             }
@@ -38,6 +39,8 @@ public class AtmScreenMainOperations extends AtmScreenImpl {
                 case 0:
                     return Screen.WITHDRAW_OPERATION;
                 case 1:
+                    return Screen.DEPOSIT_OPERATION;
+                case 2:
                     return Screen.CHECK_BALANCE;
                 case 3:
                     atm.getBills().forEach((key, value) ->

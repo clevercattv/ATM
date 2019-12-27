@@ -12,4 +12,8 @@ public interface AtmCard {
 
     boolean isAdmin();
 
+    int getDepositBalance();
+
+    void setDepositBalance(int depositBalance);
+
 }

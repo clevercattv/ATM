@@ -1,7 +1,6 @@
 package com.clevercattv.atm.screen;
 
 import com.clevercattv.atm.atm.Atm;
-import com.clevercattv.atm.card.AtmCard;
 import com.clevercattv.atm.console.AtmConsole;
 import com.clevercattv.atm.model.OperationResponse;
 import com.clevercattv.atm.model.enums.Bill;
@@ -17,13 +16,13 @@ import java.util.stream.Collectors;
 
 import static com.clevercattv.atm.util.Constants.*;
 
-public class AtmScreenWithdraw extends AtmScreenImpl {
+public class AtmScreenDeposit extends AtmScreenImpl {
 
-    private static final int[] DEFAULT_WITHDRAW = new int[]{10, 20, 50, 100, 200, 500, 1000};
-    private static List<Integer> availableWithdraw = new ArrayList<>();
-    private static final AtmOperation operationWithdraw = new AtmOperationPayment();
+    private static final int[] DEFAULT_DEPOSIT = new int[]{10, 20, 50, 100, 200, 500, 1000};
+    private static List<Integer> availableDeposit = new ArrayList<>();
+    private static final AtmOperation operationDeposit = new AtmOperationPayment();
 
-    public AtmScreenWithdraw(AtmConsole console, Atm atm) {
+    public AtmScreenDeposit(AtmConsole console, Atm atm) {
         super(console, atm);
     }
 
@@ -36,17 +35,17 @@ public class AtmScreenWithdraw extends AtmScreenImpl {
         if (filteredBills.isEmpty()) {
             return Screen.BILLS_STORAGE_EMPTY;
         }
-        countAvailableWithdrawOperations(atm.getCurrentCard(), filteredBills);
+        countAvailableDepositOperations(filteredBills);
         while (true) {
-            console.printScreenName("Withdraw operations");
-            console.println("(Max withdraw : $ " + Server.OPERATION_MAX_WITHDRAW + ")");
-            availableWithdraw.forEach(operation -> console.println(
-                    String.format("(%d) - $ %d ", operation, DEFAULT_WITHDRAW[operation])));
+            console.printScreenName("Deposit operations");
+            console.println("(Max deposit : $ " + Server.OPERATION_MAX_WITHDRAW + ")");
+            availableDeposit.forEach(operation -> console.println(
+                    String.format("(%d) - $ %d ", operation, DEFAULT_DEPOSIT[operation])));
             console.println("(7) - Custom amount");
             console.println(TO_MAIN_OPERATIONS);
             console.println(END_SESSION);
             int action = console.readInt(CHOOSE_OPERATION);
-            if (availableWithdraw.contains(action) || action > 6) {
+            if (availableDeposit.contains(action) || action > 6) {
                 switch (action) {
                     case 0:
                     case 1:
@@ -55,11 +54,11 @@ public class AtmScreenWithdraw extends AtmScreenImpl {
                     case 4:
                     case 5:
                     case 6:
-                        withdraw(DEFAULT_WITHDRAW[action]);
-                        return Screen.WITHDRAW_OPERATION;
+                        withdraw(DEFAULT_DEPOSIT[action]);
+                        return Screen.DEPOSIT_OPERATION;
                     case 7:
                         withdraw(console.readInt("Enter required amount : "));
-                        return Screen.WITHDRAW_OPERATION;
+                        return Screen.DEPOSIT_OPERATION;
                     case 8:
                         return Screen.MAIN_OPERATIONS;
                     case 9:
@@ -80,27 +79,25 @@ public class AtmScreenWithdraw extends AtmScreenImpl {
                     "You can't withdraw more than %d per one operation.", Server.OPERATION_MAX_WITHDRAW));
         } else {
             OperationResponse<Map<Bill, Integer>> response =
-                    operationWithdraw.operation(money, new EnumMap<>(atm.getBills()));
+                    operationDeposit.operation(money, new EnumMap<>(atm.getBills()));
             if (!response.isSuccess()) {
                 console.println(response.getAdditionInformation());
             } else {
-                if (Server.withdraw(money, atm.getCurrentCard())) {
+                if (Server.deposit(money, atm.getCurrentCard())) {
                     console.println(response.getAdditionInformation());
                     atm.updateBills(response.getItem());
                 } else {
-                    console.println("You haven't enough money!");
+                    console.println("You haven't enough deposit money!");
                 }
             }
         }
     }
 
-    private void countAvailableWithdrawOperations(AtmCard card, Map<Bill, Integer> bills) {
-        availableWithdraw.clear();
-        double balance = card.getBalance() * Server.WITHDRAW_INTEREST;
-        for (int i = 0; i < DEFAULT_WITHDRAW.length; i++) {
-            if (balance > DEFAULT_WITHDRAW[i] &&
-                    operationWithdraw.operation(DEFAULT_WITHDRAW[i], bills).isSuccess()) {
-                availableWithdraw.add(i);
+    private void countAvailableDepositOperations(Map<Bill, Integer> bills) {
+        availableDeposit.clear();
+        for (int i = 0; i < DEFAULT_DEPOSIT.length; i++) {
+            if (operationDeposit.operation(DEFAULT_DEPOSIT[i], bills).isSuccess()) {
+                availableDeposit.add(i);
             }
         }
     }

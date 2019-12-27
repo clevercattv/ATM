@@ -5,7 +5,7 @@ import com.clevercattv.atm.model.enums.Bill;
 
 import java.util.Map;
 
-public class AtmOperationWithdraw implements AtmOperation {
+public class AtmOperationPayment implements AtmOperation {
 
     @Override
     public OperationResponse<Map<Bill, Integer>> operation(Integer money, Map<Bill, Integer> bills) {
@@ -17,7 +17,7 @@ public class AtmOperationWithdraw implements AtmOperation {
             money -= bill.getMoney() * resultBillsCount;
             bills.put(bill, countBill - resultBillsCount);
             if (money == 0) return new OperationResponse<>(bills, true,
-                    "Withdraw success complete.");
+                    "Payment of the money success complete.");
         }
         return new OperationResponse<>(null, false,
                 "ATM didn't have enougth money..");

@@ -19,7 +19,7 @@ public class Server {
     private static final Set<AtmCard> CARDS = new HashSet<>();
 
     static {
-        CARDS.add(new AtmCardImpl(counter++, 1234, CardType.CREDIT, 20000, "", true));
+        CARDS.add(new AtmCardImpl(counter++, 1234, CardType.CREDIT, 20000, "", true, 10000));
     }
 
     private Server() {
@@ -27,7 +27,7 @@ public class Server {
 
     public static AtmCard generateCard() {
         AtmCard atmCard = new AtmCardImpl(counter++, 1111,
-                CardType.CREDIT, new Random().nextInt(100000), "", false);
+                CardType.CREDIT, new Random().nextInt(100000), "", false, 10000);
         CARDS.add(atmCard);
         return atmCard;
     }
@@ -48,6 +48,15 @@ public class Server {
                 card.setBalance(card.getBalance() - withdrawWithIntegers);
                 return true;
             }
+        }
+        return false;
+    }
+
+    /* Deposit without start percents WOW! */
+    public static boolean deposit(Integer deposit, AtmCard card) {
+        if (CARDS.contains(card) && card.getDepositBalance() > deposit) {
+            card.setDepositBalance(card.getDepositBalance() - deposit);
+            return true;
         }
         return false;
     }
