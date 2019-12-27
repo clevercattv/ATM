@@ -3,7 +3,6 @@ package com.clevercattv.atm.server;
 import com.clevercattv.atm.card.AtmCard;
 import com.clevercattv.atm.card.AtmCardImpl;
 import com.clevercattv.atm.card.CardType;
-import com.clevercattv.atm.screen.Screen;
 
 import java.util.HashSet;
 import java.util.Optional;
