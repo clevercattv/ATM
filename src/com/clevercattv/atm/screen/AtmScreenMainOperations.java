@@ -28,6 +28,7 @@ public class AtmScreenMainOperations extends AtmScreenImpl {
         if (isAdmin) {
             printAdminOperations();
         }
+        console.println("(8) - Change pin");
         console.println(END_SESSION);
         while (true) {
             int operation = console.readInt(CHOOSE_OPERATION);
@@ -63,6 +64,8 @@ public class AtmScreenMainOperations extends AtmScreenImpl {
                     atm.updateBills(bills);
                     bills.forEach((key, value) -> console.println(String.format("%s count %s", key, value)));
                     continue;
+                case 8:
+                    return Screen.CHANGE_PIN;
                 case 9:
                     atm.setCurrentCard(null);
                     return Screen.CARD_WAIT;

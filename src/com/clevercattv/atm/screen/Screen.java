@@ -9,4 +9,5 @@ public enum Screen {
     DEPOSIT_OPERATION,
     CHECK_BALANCE,
     BILLS_STORAGE_EMPTY,
+    CHANGE_PIN,
 }

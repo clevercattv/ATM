@@ -12,6 +12,10 @@ public interface AtmCard {
 
     boolean isAdmin();
 
+    int getPinCode();
+
+    void setPinCode(int pinCode);
+
     int getDepositBalance();
 
     void setDepositBalance(int depositBalance);

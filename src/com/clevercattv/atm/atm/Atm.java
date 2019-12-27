@@ -9,6 +9,8 @@ import java.util.Map;
 
 public interface Atm {
 
+    int COUNT_ATTEMPTS = 3;
+
     void init();
 
     void initScreen();
