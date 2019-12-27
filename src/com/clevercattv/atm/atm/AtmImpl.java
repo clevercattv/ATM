@@ -49,6 +49,7 @@ public class AtmImpl implements Atm {
 
     private void fillAtmScreens() {
         screens.clear();
+        screens.put(Screen.TRANSFER_OPERATION, new AtmScreenTransfer(console, this));
         screens.put(Screen.CHANGE_PIN, new AtmScreenChangePin(console, this));
         screens.put(Screen.DEPOSIT_OPERATION, new AtmScreenDeposit(console, this));
         screens.put(Screen.BILLS_STORAGE_EMPTY, new AtmScreenBillsStorageEmpty(console, this));

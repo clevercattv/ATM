@@ -3,6 +3,7 @@ package com.clevercattv.atm.server;
 import com.clevercattv.atm.card.AtmCard;
 import com.clevercattv.atm.card.AtmCardImpl;
 import com.clevercattv.atm.card.CardType;
+import com.clevercattv.atm.screen.Screen;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -59,6 +60,16 @@ public class Server {
             return true;
         }
         return false;
+    }
+
+    public static boolean transfer(AtmCard sender, AtmCard recipient, int money) {
+        if (sender.getBalance() >= money) {
+            recipient.setBalance(recipient.getBalance() + money);
+            sender.setBalance(sender.getBalance() - money);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static void callMaster() {

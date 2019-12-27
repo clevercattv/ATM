@@ -10,4 +10,5 @@ public enum Screen {
     CHECK_BALANCE,
     BILLS_STORAGE_EMPTY,
     CHANGE_PIN,
+    TRANSFER_OPERATION,
 }
